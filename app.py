@@ -56,6 +56,7 @@ class App:
         tools_menu.add_command(label='Report a bug on GitHub…',command=lambda:self.save_support(open_github=True))
         tools_menu.add_separator()
         tools_menu.add_command(label='Detect firmware role…',command=self.detect_firmware)
+        tools_menu.add_command(label='Radio diagnostics…',command=self.radio_diagnostics)
         tools_menu.add_command(label='Export dry run…',command=self.export_dry_run)
         tools_menu.add_command(label='Back up portable app…',command=self.backup_portable)
         ttk.Button(header,text='App updates',command=self.open_updates).pack(side='right',padx=(8,0))
@@ -98,8 +99,10 @@ class App:
             'Location & GPS': ('gps', 'gps_interval', 'latitude', 'longitude', 'advert_location_policy'),
             'Contact discovery': ('manual_add_contacts',) + AUTO,
             'Telemetry': ('telemetry_mode_base', 'telemetry_mode_loc', 'telemetry_mode_env'),
+            'Screen & USB': ('screen_timeout', 'screen_usb', 'usb_priority'),
         }
         notes = {
+            'Screen & USB': 'Available only when reported by compatible firmware. USB priority pauses BLE commands while a USB app has the port open; unplugging restores access. Screen timeout applies on the next wake or interaction.',
             'Device & radio': 'Choose US/Canada or EU/UK frequency suggestions, or type a custom MHz value. Frequency selection changes frequency only; bandwidth, spreading factor and coding rate must also match your network. Bandwidth accepts dropdown choices or custom kHz values. Repeat mode is preserved.',
             'Location & GPS': 'Fixed coordinates require GPS to be off. GPS options depend on the hardware and firmware. Location sharing in adverts and telemetry access are separate settings.',
             'Contact discovery': '“Automatically add all types” overrides the individual type filters. Use selected types/manual mode to apply them. With all type filters off, contacts are added manually. The hop limit still applies.',
@@ -188,6 +191,24 @@ class App:
         self.poll_id = root.after(100, self.poll)
         self.scan()
         self.edited()
+
+    def radio_diagnostics(self):
+        if self.busy or self.batch_window is not None or self.update_window is not None: return
+        try: port = self.selected_port()
+        except ValueError as exc:
+            messagebox.showerror('Radio diagnostics', str(exc)); return
+        from radio_extras import read_diagnostics, format_diagnostics
+        def done(result):
+            window = tk.Toplevel(self.root); window.title('Radio diagnostics')
+            text = tk.Text(window, wrap='word', width=66, height=24, padx=16, pady=16)
+            text.pack(fill='both', expand=True)
+            text.insert('1.0', format_diagnostics(result)); text.configure(state='disabled')
+            for key, entry in self.entries.items():
+                entry.configure(state='normal' if self.snapshot and key in self.snapshot['settings'] else 'disabled')
+            for entry in self.channel_entries: entry.configure(state='normal')
+            self.edited(); self.location_state()
+            self.status.set('Diagnostics complete. No settings changed; no background polling.')
+        self.run(read_diagnostics(port), done, 'Reading local diagnostics…')
 
     def detect_firmware(self):
         if self.busy or self.batch_window is not None or self.update_window is not None:return

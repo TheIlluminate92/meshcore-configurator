@@ -37,3 +37,9 @@ HELP = {
     'Save device snapshot': 'Saves the last-read device data rather than your pending edits. Check reported read errors to see whether any information was unavailable.',
     'Review & apply': 'Shows exactly which settings and channel slots will change. After you confirm, writes them through USB and rereads to verify. If a write fails, some earlier changes may already have applied; read the device again.',
 }
+
+HELP.update({
+ 'screen_timeout': 'Turn the display off after 5–300 seconds without interaction. Default: 15 seconds. Shorter saves screen power. Takes effect on the next wake or interaction.',
+ 'screen_usb': 'Keep an already awake screen on while externally powered by USB, including a charger. Unplugging resumes the normal timeout. Default: off. Does not turn the radio off.',
+ 'usb_priority': 'Pause BLE commands while a USB application has the serial port open. BLE receives an error for commands during that time; unplug USB or close the port to restore access. Default: off. This does not isolate shared client state or stop unsolicited messages.',
+})

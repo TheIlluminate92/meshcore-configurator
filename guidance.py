@@ -30,6 +30,12 @@ ADVICE = {
  'telemetry_mode_env': 'Allow if needed; base access required.',
 }
 
+ADVICE.update({
+ 'screen_timeout': '15 seconds is a useful starting point; shorter saves power.',
+ 'screen_usb': 'Useful on a desk; normal timeout resumes on battery.',
+ 'usb_priority': 'Optional: prevent phone commands during USB configuration.',
+})
+
 def impact(key, value):
     """Relative impact within each setting only: None means unquantified."""
     try: v = float(parse_input(key, value))

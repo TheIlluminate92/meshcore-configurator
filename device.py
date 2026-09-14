@@ -88,6 +88,11 @@ async def basic(mc, port):
     for k in ('gps', 'gps_interval'):
         if k in custom and supported_value(k, custom[k]) is not None:
             snapshot['settings'][k] = supported_value(k, custom[k])
+    # Opt in only on the exact extension schema and bounds we understand.
+    from radio_extras import discovered_settings
+    snapshot['settings'].update(discovered_settings(custom))
+    from radio_extras import discovered_settings
+    snapshot['settings'].update(discovered_settings(custom))
     auto = snapshot.get('auto_add', {})
     if 'config' in auto:
         snapshot['settings'].update({k: int(bool(auto['config'] & bit)) for k, bit in AUTO_BITS.items()})
@@ -204,7 +209,7 @@ async def apply_device(port, baseline, desired, report_dir, channels=None):
         save_json(report_path, report)
         try:
             jobs = []
-            for key in ('gps', 'gps_interval'):
+            for key in ('gps', 'gps_interval', 'screen_timeout', 'screen_usb', 'usb_priority'):
                 if key in delta:
                     jobs.append((key, lambda k=key: mc.commands.set_custom_var(k, str(merged[k]))))
             if 'name' in delta:
