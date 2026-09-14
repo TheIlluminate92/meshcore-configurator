@@ -7,7 +7,7 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 from app_version import VERSION
-REPO = 'TheIlluminate92/meshcore-usb-configurator'
+REPO = 'TheIlluminate92/meshcore-configurator'
 API = 'https://api.github.com/repos/' + REPO
 ASSET = 'MeshCore-Configurator.exe'
 

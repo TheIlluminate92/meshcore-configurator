@@ -88,4 +88,4 @@ def issue_url():
     from urllib.parse import urlencode
     body = ('App version: ' + VERSION + '\n\nWhat happened?\n\nSteps to reproduce:\n1. \n\nExpected result:\n\nAttach the MeshCore-support.zip here by dragging it into this description. '
             'Please review screenshots for names, locations, channel keys or other private information before attaching them.')
-    return 'https://github.com/TheIlluminate92/meshcore-usb-configurator/issues/new?' + urlencode({'title':'Bug report — '+VERSION,'body':body})
+    return 'https://github.com/TheIlluminate92/meshcore-configurator/issues/new?' + urlencode({'title':'Bug report — '+VERSION,'body':body})

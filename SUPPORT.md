@@ -2,13 +2,13 @@
 
 ## Download and start
 
-Use the [latest release](https://github.com/TheIlluminate92/meshcore-usb-configurator/releases/latest), download **MeshCore-Configurator-portable.zip**, and extract the whole folder. Open **! MeshCore Configurator.exe**. Keep its hidden **User Data** folder beside it.
+Use the [latest release](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest), download **MeshCore-Configurator-portable.zip**, and extract the whole folder. Open **! MeshCore Configurator.exe**. Keep its hidden **User Data** folder beside it.
 
 ## Report a problem
 
 Choose **Help → Report a bug on GitHub**. Save the support ZIP, describe what happened on the issue page, attach the ZIP and submit. GitHub may ask you to sign in. The app never uploads or submits automatically and needs no GitHub token.
 
-You can also choose **Help → Save support report** and attach it to a [new issue](https://github.com/TheIlluminate92/meshcore-usb-configurator/issues/new/choose). Include the app version, radio model/firmware, USB or Bluetooth, the steps you tried and the exact error message.
+You can also choose **Help → Save support report** and attach it to a [new issue](https://github.com/TheIlluminate92/meshcore-configurator/issues/new/choose). Include the app version, radio model/firmware, USB or Bluetooth, the steps you tried and the exact error message.
 
 Support ZIPs omit names, identifiers, locations, channel keys, raw device payloads and exception messages. They contain app/system metadata, reported capability names and categorized diagnostics. Review screenshots yourself before sharing.
 
