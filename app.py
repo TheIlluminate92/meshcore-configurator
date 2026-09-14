@@ -96,7 +96,7 @@ class App:
         self.hints = {}
         groups = {
             'Device & radio': ('name', 'frequency', 'bandwidth', 'spreading_factor', 'coding_rate', 'tx_power', 'path_hash_mode', 'multi_acks'),
-            'Location & GPS': ('gps', 'gps_interval', 'latitude', 'longitude', 'advert_location_policy'),
+            'Location & GPS': ('gps', 'motion_gps', 'gps_interval', 'latitude', 'longitude', 'advert_location_policy'),
             'Contact discovery': ('manual_add_contacts',) + AUTO,
             'Telemetry': ('telemetry_mode_base', 'telemetry_mode_loc', 'telemetry_mode_env'),
             'Device options': ('buzzer_quiet', 'led_mode', 'screen_timeout', 'screen_usb', 'usb_priority'),

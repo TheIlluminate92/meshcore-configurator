@@ -1,3 +1,5 @@
+> Development branch: **0.7.3-dev**. Adds T1000-E motion GPS presets to Location & GPS and batch profiles when compatible firmware explicitly advertises support. See [motion behavior](MOTION_GPS.md) and [bug checks](BUG_CHECK_2026-09-14.md). Stable downloads are unchanged.
+
 # MeshCore Configurator
 
 [Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-usb-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)

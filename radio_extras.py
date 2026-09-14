@@ -9,7 +9,7 @@ def discovered_settings(custom):
     if not isinstance(custom, dict):
         return {}
     if str(custom.get('t1000_ui')) == '1':
-        keys = T1000_KEYS
+        keys = T1000_KEYS + (('motion_gps',) if str(custom.get('motion_schema')) == '1' else ())
     elif str(custom.get('ui_schema')) == '1' and str(custom.get('screen_min')) == '5' and str(custom.get('screen_max')) == '300':
         keys = EXTRA_KEYS
     else:

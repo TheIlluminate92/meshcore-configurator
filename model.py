@@ -28,6 +28,7 @@ FIELDS = {
     'gps_interval': ('GPS update interval (seconds)', int, 1, 86400),
     'path_hash_mode': ('Path hash size', int, 0, 2),
     'buzzer_quiet': ('Buzzer', int, 0, 1),
+    'motion_gps': ('Motion-aware GPS', int, 0, 3),
     'led_mode': ('Status LED on battery', int, 0, 2),
     'screen_timeout': ('Screen timeout (seconds)', int, 5, 300),
     'screen_usb': ('Keep screen awake on USB power', int, 0, 1),
@@ -44,6 +45,7 @@ CHOICES = {k: {0: 'Off', 1: 'On'} for k in (*AUTO_BITS, 'gps', 'advert_location_
 # Editable suggestions preserve custom network values from existing profiles.
 EDITABLE_CHOICES = {'frequency', 'bandwidth'}
 CHOICES['buzzer_quiet'] = {0: 'Sounds enabled', 1: 'Muted'}
+CHOICES['motion_gps'] = {0: 'Off — ordinary GPS', 1: 'Responsive', 2: 'Balanced', 3: 'Battery saver'}
 CHOICES['led_mode'] = {0: 'Normal', 1: 'Unread messages only', 2: 'Quiet'}
 CHOICES['frequency'] = {910.525: 'US / Canada — 910.525 MHz',
                         869.618: 'EU / UK narrow — 869.618 MHz',

@@ -17,7 +17,7 @@ class SharedEditor:
         tabs=ttk.Notebook(f);tabs.pack(fill='both',expand=True)
         groups=[('Device options', ('buzzer_quiet','led_mode','screen_timeout','screen_usb','usb_priority')),
                 ('Radio',('frequency','bandwidth','spreading_factor','coding_rate','tx_power','path_hash_mode','multi_acks')),
-                ('GPS & telemetry',('gps','gps_interval','advert_location_policy','telemetry_mode_base','telemetry_mode_loc','telemetry_mode_env')),
+                ('GPS & telemetry',('gps','motion_gps','gps_interval','advert_location_policy','telemetry_mode_base','telemetry_mode_loc','telemetry_mode_env')),
                 ('Discovery',('manual_add_contacts','overwrite_oldest','auto_add_chat','auto_add_repeater','auto_add_room_server','auto_add_sensor','auto_add_max_hops'))]
         common=set.intersection(*(set(s['settings']) for s in snapshots))
         source=owner.document['settings']

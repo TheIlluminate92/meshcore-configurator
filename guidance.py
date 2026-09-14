@@ -32,6 +32,7 @@ ADVICE = {
 
 ADVICE.update({
  'buzzer_quiet': 'Mute if you prefer phone alerts; modest power savings.',
+ 'motion_gps': 'Balanced: sleep GPS after 3 min still; movement wakes it. Experimental.',
  'led_mode': 'Unread-only reduces flashing; quiet hides normal status.',
  'screen_timeout': '15 seconds is a useful starting point; shorter saves power.',
  'screen_usb': 'Useful on a desk; normal timeout resumes on battery.',

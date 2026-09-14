@@ -46,5 +46,6 @@ HELP.update({
 
 HELP.update({
  'buzzer_quiet': 'Enable or mute the T1000-E buzzer. Uses the existing saved quiet setting; the physical mute gesture still works. No custom melody or volume changes.',
+ 'motion_gps': 'T1000-E experimental GPS power control. Off preserves ordinary GPS. Responsive: sleep after 10 minutes still, refresh after 5 minutes asleep. Balanced: 3 minutes / 15 minutes. Battery saver: 1 minute / 30 minutes. Confirmed motion wakes GPS. No fix for 2 minutes pauses GPS for 5 minutes. Sensor failure keeps ordinary GPS running. Does not change message or advert intervals. Battery savings need field testing.',
  'led_mode': 'Normal: existing heartbeat and unread indication. Unread messages only: no heartbeat on battery. Quiet: no normal status flashes on battery. External-power behavior and bootloader indications are preserved.',
 })

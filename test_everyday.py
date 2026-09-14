@@ -94,7 +94,7 @@ class T1000ApplyTests(unittest.IsolatedAsyncioTestCase):
         import device
         from test_configurator import BASE
         for mismatch in (False, True):
-            state=copy.deepcopy(BASE);state['settings'].update(buzzer_quiet=0,led_mode=0,usb_priority=0)
+            state=copy.deepcopy(BASE);state['settings'].update(buzzer_quiet=0,led_mode=0,usb_priority=0,motion_gps=0)
             baseline=copy.deepcopy(state); sent=[]
             async def basic(*args):return copy.deepcopy(state)
             async def custom(key,value):
@@ -105,11 +105,11 @@ class T1000ApplyTests(unittest.IsolatedAsyncioTestCase):
             with tempfile.TemporaryDirectory() as folder, patch.object(device,'basic',basic), patch.object(device,'operate',operate):
                 if mismatch:
                     with self.assertRaisesRegex(RuntimeError,'Read-back mismatch'):
-                        await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1),folder)
+                        await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1,motion_gps=2),folder)
                 else:
-                    result=await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1),folder)
+                    result=await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1,motion_gps=2),folder)
                     self.assertEqual(result['settings']['led_mode'],2)
-            self.assertEqual(sent,[('usb_priority','1'),('buzzer_quiet','1'),('led_mode','2')])
+            self.assertEqual(sent,[('usb_priority','1'),('buzzer_quiet','1'),('led_mode','2'),('motion_gps','2')])
         state=copy.deepcopy(BASE);baseline=copy.deepcopy(state);sent=[]
         with tempfile.TemporaryDirectory() as folder, patch.object(device,'basic',basic), patch.object(device,'operate',operate):
             with self.assertRaisesRegex(ValueError,'did not report'):
@@ -128,3 +128,17 @@ class DevelopmentUpdateTests(unittest.TestCase):
             self.assertIsNone(updater.check())
 
 if __name__ == '__main__': unittest.main()
+
+class MotionCapabilitiesTests(unittest.TestCase):
+    def test_motion_requires_board_and_schema(self):
+        for caps in ({}, {'t1000_ui':'1'}, {'motion_schema':'1'}, {'t1000_ui':'1','motion_schema':'2'}, {'ui_schema':'1','screen_min':'5','screen_max':'300','motion_schema':'1'}):
+            self.assertNotIn('motion_gps', discovered_settings(dict(caps,motion_gps='2')))
+        for value in range(4):
+            self.assertEqual(discovered_settings(dict(t1000_ui='1',motion_schema='1',motion_gps=str(value))), {'motion_gps':value})
+        for value in ('4','-1','2x','1.5'):
+            self.assertEqual(discovered_settings(dict(t1000_ui='1',motion_schema='1',motion_gps=value)), {})
+    def test_motion_roundtrip(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'profile.json'
+            path.write_text(json.dumps(profile({'motion_gps':2})),encoding='utf-8')
+            self.assertEqual(load_document(path)[0],{'motion_gps':2})
