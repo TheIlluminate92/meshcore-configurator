@@ -97,7 +97,7 @@
 
 ## Bug hunt â€” 2026-09-09
 
-Fixes shipped in commit [af76e77](https://github.com/TheIlluminate92/meshcore-usb-configurator/commit/af76e77c4efd105498f83d479bc29c6c26e5f234).
+Fixes shipped in commit [af76e77](https://github.com/TheIlluminate92/meshcore-configurator/commit/af76e77c4efd105498f83d479bc29c6c26e5f234).
 
 ### Fixed
 

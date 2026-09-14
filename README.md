@@ -1,6 +1,6 @@
 # MeshCore Configurator
 
-[Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-usb-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
+[Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
 
 A portable Windows app for configuring MeshCore Companion radios over USB or Bluetooth. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
 

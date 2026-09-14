@@ -49,7 +49,7 @@ class SupportTests(unittest.TestCase):
         from urllib.parse import urlparse, parse_qs
         u=urlparse(issue_url())
         self.assertEqual(u.netloc,'github.com')
-        self.assertEqual(u.path,'/TheIlluminate92/meshcore-usb-configurator/issues/new')
+        self.assertEqual(u.path,'/TheIlluminate92/meshcore-configurator/issues/new')
         self.assertIn('MeshCore-support.zip',parse_qs(u.query)['body'][0])
 
 
