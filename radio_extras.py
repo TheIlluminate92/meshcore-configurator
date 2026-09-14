@@ -3,15 +3,19 @@ from datetime import datetime, timezone
 from model import validate
 
 EXTRA_KEYS = ('screen_timeout', 'screen_usb', 'usb_priority')
+T1000_KEYS = ('buzzer_quiet', 'led_mode', 'usb_priority')
 
 def discovered_settings(custom):
     if not isinstance(custom, dict):
         return {}
-    # Schema 1 is bounded deliberately; unknown revisions stay read-only.
-    if str(custom.get('ui_schema')) != '1' or str(custom.get('screen_min')) != '5' or str(custom.get('screen_max')) != '300':
+    if str(custom.get('t1000_ui')) == '1':
+        keys = T1000_KEYS
+    elif str(custom.get('ui_schema')) == '1' and str(custom.get('screen_min')) == '5' and str(custom.get('screen_max')) == '300':
+        keys = EXTRA_KEYS
+    else:
         return {}
     result = {}
-    for key in EXTRA_KEYS:
+    for key in keys:
         if key in custom:
             try: result.update(validate({key: custom[key]}))
             except (TypeError, ValueError): pass

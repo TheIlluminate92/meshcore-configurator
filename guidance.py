@@ -31,6 +31,8 @@ ADVICE = {
 }
 
 ADVICE.update({
+ 'buzzer_quiet': 'Mute if you prefer phone alerts; modest power savings.',
+ 'led_mode': 'Unread-only reduces flashing; quiet hides normal status.',
  'screen_timeout': '15 seconds is a useful starting point; shorter saves power.',
  'screen_usb': 'Useful on a desk; normal timeout resumes on battery.',
  'usb_priority': 'Optional: prevent phone commands during USB configuration.',

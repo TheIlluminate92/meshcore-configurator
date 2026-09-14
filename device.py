@@ -209,7 +209,7 @@ async def apply_device(port, baseline, desired, report_dir, channels=None):
         save_json(report_path, report)
         try:
             jobs = []
-            for key in ('gps', 'gps_interval', 'screen_timeout', 'screen_usb', 'usb_priority'):
+            for key in ('gps', 'gps_interval', 'screen_timeout', 'screen_usb', 'usb_priority', 'buzzer_quiet', 'led_mode'):
                 if key in delta:
                     jobs.append((key, lambda k=key: mc.commands.set_custom_var(k, str(merged[k]))))
             if 'name' in delta:

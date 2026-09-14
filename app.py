@@ -99,10 +99,10 @@ class App:
             'Location & GPS': ('gps', 'gps_interval', 'latitude', 'longitude', 'advert_location_policy'),
             'Contact discovery': ('manual_add_contacts',) + AUTO,
             'Telemetry': ('telemetry_mode_base', 'telemetry_mode_loc', 'telemetry_mode_env'),
-            'Screen & USB': ('screen_timeout', 'screen_usb', 'usb_priority'),
+            'Device options': ('buzzer_quiet', 'led_mode', 'screen_timeout', 'screen_usb', 'usb_priority'),
         }
         notes = {
-            'Screen & USB': 'Available only when reported by compatible firmware. USB priority pauses BLE commands while a USB app has the port open; unplugging restores access. Screen timeout applies on the next wake or interaction.',
+            'Device options': 'Available only when reported by compatible firmware. USB priority pauses BLE commands while a USB app has the port open; unplugging restores access. Screen timeout applies on the next wake or interaction.',
             'Device & radio': 'Choose US/Canada or EU/UK frequency suggestions, or type a custom MHz value. Frequency selection changes frequency only; bandwidth, spreading factor and coding rate must also match your network. Bandwidth accepts dropdown choices or custom kHz values. Repeat mode is preserved.',
             'Location & GPS': 'Fixed coordinates require GPS to be off. GPS options depend on the hardware and firmware. Location sharing in adverts and telemetry access are separate settings.',
             'Contact discovery': '“Automatically add all types” overrides the individual type filters. Use selected types/manual mode to apply them. With all type filters off, contacts are added manually. The hop limit still applies.',

@@ -43,3 +43,8 @@ HELP.update({
  'screen_usb': 'Keep an already awake screen on while externally powered by USB, including a charger. Unplugging resumes the normal timeout. Default: off. Does not turn the radio off.',
  'usb_priority': 'Pause BLE commands while a USB application has the serial port open. BLE receives an error for commands during that time; unplug USB or close the port to restore access. Default: off. This does not isolate shared client state or stop unsolicited messages.',
 })
+
+HELP.update({
+ 'buzzer_quiet': 'Enable or mute the T1000-E buzzer. Uses the existing saved quiet setting; the physical mute gesture still works. No custom melody or volume changes.',
+ 'led_mode': 'Normal: existing heartbeat and unread indication. Unread messages only: no heartbeat on battery. Quiet: no normal status flashes on battery. External-power behavior and bootloader indications are preserved.',
+})

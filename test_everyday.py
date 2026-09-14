@@ -77,4 +77,54 @@ class EverydayApplyTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(set(result['errors']),{'radio','packets'})
         self.assertEqual(len(calls),3)
 
+
+class T1000OptionTests(unittest.TestCase):
+    def test_capabilities_are_board_specific(self):
+        caps = dict(t1000_ui='1', buzzer_quiet='1', led_mode='2', usb_priority='0', screen_timeout='15')
+        self.assertEqual(discovered_settings(caps), dict(buzzer_quiet=1,led_mode=2,usb_priority=0))
+        caps['t1000_ui']='2'; self.assertEqual(discovered_settings(caps),{})
+        caps['t1000_ui']='1'; caps['led_mode']='3'
+        self.assertNotIn('led_mode',discovered_settings(caps))
+
+class T1000ApplyTests(unittest.IsolatedAsyncioTestCase):
+    async def test_apply_verify_and_block_unreported(self):
+        import copy
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        import device
+        from test_configurator import BASE
+        for mismatch in (False, True):
+            state=copy.deepcopy(BASE);state['settings'].update(buzzer_quiet=0,led_mode=0,usb_priority=0)
+            baseline=copy.deepcopy(state); sent=[]
+            async def basic(*args):return copy.deepcopy(state)
+            async def custom(key,value):
+                sent.append((key,value))
+                if not mismatch:state['settings'][key]=int(value)
+                return SimpleNamespace(type=SimpleNamespace(name='OK'),payload={})
+            async def operate(port,action):return await action(SimpleNamespace(commands=SimpleNamespace(set_custom_var=custom)))
+            with tempfile.TemporaryDirectory() as folder, patch.object(device,'basic',basic), patch.object(device,'operate',operate):
+                if mismatch:
+                    with self.assertRaisesRegex(RuntimeError,'Read-back mismatch'):
+                        await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1),folder)
+                else:
+                    result=await device.apply_device('mock',baseline,dict(buzzer_quiet=1,led_mode=2,usb_priority=1),folder)
+                    self.assertEqual(result['settings']['led_mode'],2)
+            self.assertEqual(sent,[('usb_priority','1'),('buzzer_quiet','1'),('led_mode','2')])
+        state=copy.deepcopy(BASE);baseline=copy.deepcopy(state);sent=[]
+        with tempfile.TemporaryDirectory() as folder, patch.object(device,'basic',basic), patch.object(device,'operate',operate):
+            with self.assertRaisesRegex(ValueError,'did not report'):
+                await device.apply_device('mock',baseline,dict(led_mode=2),folder)
+        self.assertFalse(sent)
+
+
+class DevelopmentUpdateTests(unittest.TestCase):
+    def test_development_build_can_check_and_upgrade_to_same_stable(self):
+        import io, hashlib, updater
+        from unittest.mock import patch
+        release={'tag_name':'v0.7.2','assets':[{'name':updater.ASSET,'id':1,'size':2,'digest':'sha256:'+hashlib.sha256(b'MZ').hexdigest()}]}
+        with patch.object(updater,'VERSION','0.7.2-dev'), patch.object(updater,'request',return_value=io.BytesIO(json.dumps(release).encode())):
+            self.assertIsNotNone(updater.check())
+        with patch.object(updater,'VERSION','0.7.2'), patch.object(updater,'request',return_value=io.BytesIO(json.dumps(release).encode())):
+            self.assertIsNone(updater.check())
+
 if __name__ == '__main__': unittest.main()
