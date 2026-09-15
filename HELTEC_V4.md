@@ -21,5 +21,11 @@ Firmware build options and unsupported controls are mapped in the private firmwa
 repository's `docs/HELTEC_V4.md`. No new RX gain, FEM gain, repeat-mode, identity-key
 or display controls are claimed by this candidate.
 
+Planned V4 firmware control: manual Wi-Fi on/off on the radio itself, with
+remembered state/network and visible connection status. USB/BLE should remain
+available when Wi-Fi is off. Automatic Wi-Fi idle shutdown is outside the
+requested scope. The on-device toggle is not implemented in this candidate;
+current Wi-Fi enable/disable is through the PC setup dialog.
+
 Hardware validation is pending. This development app does not replace the public
 stable release or flash the radio automatically.
