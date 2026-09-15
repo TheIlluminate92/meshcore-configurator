@@ -1,9 +1,9 @@
-# V4 candidate support — 0.7.4-dev
+# V4 candidate support — 0.7.5-dev
 
 - USB, Bluetooth and Wi-Fi (TCP) connections use the same Companion read/apply/verify adapter.
 - Read the radio over USB/BLE, then select **Wi-Fi setup**. Only firmware advertising
   `wifi_schema:1` is accepted. SSID/password/port/enabled state are submitted as one
-  bounded record. Identity is checked before sending; enabled/SSID/port are reread.
+  bounded record. Identity is checked before sending and after saving; enabled/SSID/port are reread.
 - Password is write-only and is not included in profiles, snapshots or support
   reports. Enter it again when saving. Blank means an open network, not "keep old".
 - Reread the radio after network association for `wifi_ip` in Device data. Select

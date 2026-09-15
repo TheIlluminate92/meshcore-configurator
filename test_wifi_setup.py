@@ -42,11 +42,13 @@ class WiFiSetupTests(unittest.TestCase):
         self.assertEqual(endpoint('192.168.1.5'),('192.168.1.5',5000))
         self.assertEqual(endpoint('tcp://radio.local:1234'),('radio.local',1234))
         self.assertEqual(endpoint('[::1]:5000'),('::1',5000))
-        for value in ['https://radio','tcp://user:secret@radio','radio:65536','radio/path','bad host','radio:0']:
+        for value in ['https://radio','tcp://user:secret@radio','tcp://@radio','radio:65536','radio/path','bad host','radio:0']:
             with self.assertRaises(ValueError): endpoint(value)
 
     def test_rejects_unknown_schema_and_network_provisioning(self):
         with self.assertRaises(ValueError): decode_status({'wifi_schema':'2'})
+        for value in (None, [], {'wifi_schema':'1','wifi_on':None,'wifi_port':5000,'wifi_ssid':''}):
+            with self.assertRaises(ValueError): decode_status(value)
         with self.assertRaises(ValueError): asyncio.run(configure('tcp://radio:5000','id',True,'s','password',5000))
 
     def test_identity_guard_and_readback(self):
@@ -66,3 +68,16 @@ class WiFiSetupTests(unittest.TestCase):
             result=asyncio.run(configure('COM1','id',True,'ssid','password',5000))
             self.assertTrue(result['enabled']); self.assertNotIn('password',result)
             with self.assertRaises(RuntimeError): asyncio.run(configure('COM1','id',True,'different','password',5000))
+
+    def test_wifi_readback_identity_change_is_not_success(self):
+        import device
+        reads=[]
+        async def basic(*args):
+            reads.append(True)
+            return {'self_info':{'public_key':'id' if len(reads)==1 else 'wrong'},
+                    'custom_vars':dict(wifi_schema='1',wifi_on='1',wifi_port='5000',wifi_ssid='73736964')}
+        async def setter(*args): return SimpleNamespace(type=SimpleNamespace(name='OK'),payload={})
+        async def operate(port,action): return await action(SimpleNamespace(commands=SimpleNamespace(set_custom_var=setter)))
+        with patch.object(device,'basic',basic),patch.object(device,'operate',operate):
+            with self.assertRaisesRegex(RuntimeError,'identity mismatch'):
+                asyncio.run(configure('COM1','id',True,'ssid','password',5000))

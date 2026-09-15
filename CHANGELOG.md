@@ -1,5 +1,23 @@
 # Changelog
 
+## Development only — 0.7.5-dev (everyday-radio)
+
+- Bounded, ordered TCP receive handling; awaited disconnect and task cleanup.
+- Wi-Fi setup rechecks radio identity after saving and protects pending edits.
+- Malformed network addresses/status types are rejected consistently.
+- Regression coverage includes real loopback sockets, fragmented/coalesced
+  responses and 350-contact sync. See BUG_AUDIT_2026-09-15.md.
+
+## Development only — 0.7.4-dev
+
+- V4 Wi-Fi setup and TCP connections; passwords stay out of app profiles/reports.
+- Advanced receive-delay and airtime tuning with paired write/read-back checks.
+
+## Development only — 0.7.3-dev
+
+- T1000 buzzer/LED/USB options and motion GPS presets; T114 display options.
+- These capability-gated firmware extensions are independent of stable 0.7.0.
+
 ## Planning and portability — 0.7.0
 
 - Help → Detect firmware role queries USB server firmware using read-only `get role` and identifies Companion via its protocol handshake. Unknown replies remain unknown. Server settings are still read-only references pending a full CLI adapter and hardware validation.

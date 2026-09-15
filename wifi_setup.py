@@ -10,7 +10,7 @@ def endpoint(value):
         port = 5000 if parsed.port is None else parsed.port
     except ValueError:
         raise ValueError('Use a host or IP address and a port from 1 to 65535.') from None
-    if (parsed.scheme != 'tcp' or not parsed.hostname or parsed.username or parsed.password
+    if (parsed.scheme != 'tcp' or not parsed.hostname or parsed.username is not None or parsed.password is not None
             or parsed.path or parsed.query or parsed.fragment or not 1 <= port <= 65535
             or any(c.isspace() for c in parsed.netloc)):
         raise ValueError('Enter a radio IP address or hostname, optionally followed by :5000.')
@@ -32,6 +32,8 @@ def encode_setup(enabled, ssid, password, port):
 
 
 def decode_status(custom):
+    if not isinstance(custom, dict):
+        raise ValueError('The radio returned invalid Wi-Fi settings.')
     if str(custom.get('wifi_schema')) != '1':
         raise ValueError('This firmware does not advertise supported Wi-Fi setup. Use the V4 triple-interface build.')
     try:
@@ -39,7 +41,7 @@ def decode_status(custom):
         ssid = bytes.fromhex(custom['wifi_ssid']).decode('utf-8')
         if state not in (0,1) or not 1 <= port <= 65535 or len(ssid.encode('utf-8')) > 32:
             raise ValueError()
-    except (KeyError, ValueError, UnicodeError):
+    except (KeyError, ValueError, TypeError, UnicodeError):
         raise ValueError('The radio returned invalid Wi-Fi settings.') from None
     return {'enabled': bool(state), 'ssid': ssid, 'port': port, 'ip': custom.get('wifi_ip','0.0.0.0')}
 
@@ -55,8 +57,10 @@ async def configure(port, identity, enabled, ssid, password, tcp_port):
             raise ValueError('A different radio is connected. Read it again before configuring Wi-Fi.')
         decode_status(before.get('custom_vars',{}))
         await event(mc.commands.set_custom_var('wifi_setup',encoded),'OK')
-        after = await event(mc.commands.get_custom_vars(),'CUSTOM_VARS')
-        status = decode_status(after)
+        after = await basic(mc,port)
+        if after['self_info'].get('public_key') != identity:
+            raise RuntimeError('Read-back identity mismatch after Wi-Fi setup. Read the device again.')
+        status = decode_status(after.get('custom_vars',{}))
         if (status['enabled'],status['ssid'],status['port']) != (bool(enabled),ssid,int(tcp_port)):
             raise RuntimeError('Wi-Fi settings were acknowledged but read-back did not match. Read the radio again.')
         return status
@@ -67,6 +71,8 @@ def open_setup(app):
     import tkinter as tk
     from tkinter import ttk, messagebox
     if app.busy:
+        return
+    if not app.confirm_discard():
         return
     try:
         if not app.snapshot:

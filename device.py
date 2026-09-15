@@ -49,9 +49,9 @@ async def bluetooth_devices():
 def make_connection(port):
     if port.startswith('tcp://'):
         from wifi_setup import endpoint
-        from meshcore import TCPConnection
+        from tcp_connection import ClosingTCPConnection
         host, number = endpoint(port)
-        return TCPConnection(host, number)
+        return ClosingTCPConnection(host, number)
     if port.startswith('ble:'):
         from meshcore import BLEConnection
         # This library uses a non-None pin flag to request OS pairing.

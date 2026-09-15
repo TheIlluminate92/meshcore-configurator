@@ -1,10 +1,10 @@
-> Development branch: **0.7.3-dev**. Adds T1000-E motion GPS presets to Location & GPS and batch profiles when compatible firmware explicitly advertises support. See [motion behavior](MOTION_GPS.md) and [bug checks](BUG_CHECK_2026-09-14.md). Stable downloads are unchanged.
+> Development branch: **0.7.5-dev**. Includes V4 USB/BLE/Wi-Fi setup, verified tuning controls, T1000 motion GPS and T114 display options. Controls require compatible firmware. See [V4 setup](HELTEC_V4.md), [current bug audit](BUG_AUDIT_2026-09-15.md), and [motion behavior](MOTION_GPS.md). The stable download below is a separate version.
 
 # MeshCore Configurator
 
 [Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
 
-A portable Windows app for configuring MeshCore Companion radios over USB or Bluetooth. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
+A portable Windows app for configuring MeshCore Companion radios over USB, Bluetooth, or compatible Wi-Fi TCP firmware. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
 
 ## Run the portable app
 
@@ -96,8 +96,3 @@ Use **Compatibility** in Saved profiles or **More → Compatibility review** in 
 - **App updates** displays plain-text release notes for an available update. Updating an older version to 0.7.0 still uses that older update dialog; the notes view appears once 0.7.0 is running.
 
 See [Community requests](COMMUNITY_REQUESTS.md) for sourced ideas reviewed on September 9, 2026.
-
-
-## Heltec V4 candidate
-
-USB + BLE + Wi-Fi candidate work and configuration coverage: [configurator guide](HELTEC_V4.md). Hardware validation is pending; choose the correct V4 or V4 R8 OLED target before flashing.
