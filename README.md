@@ -4,6 +4,10 @@
 
 A portable Windows app for configuring MeshCore Companion radios over USB or Bluetooth. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
 
+## Custom-firmware development
+
+Custom T1000-E/T114 options and Heltec V4/V4 R8 USB + Bluetooth + Wi-Fi support are on the [everyday-radio development branch](https://github.com/TheIlluminate92/meshcore-configurator/tree/everyday-radio). See the [September 15 bug audit](https://github.com/TheIlluminate92/meshcore-configurator/blob/everyday-radio/BUG_AUDIT_2026-09-15.md) and [V4 setup guide](https://github.com/TheIlluminate92/meshcore-configurator/blob/everyday-radio/HELTEC_V4.md). These development features are separate from the stable download above and are enabled only when the radio reports support.
+
 ## Run the portable app
 
 Open **! MeshCore Configurator.exe**. Move or back up the **whole portable folder** to carry your information to another PC. Python is bundled; no separate installation is needed.
