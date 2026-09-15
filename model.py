@@ -4,6 +4,8 @@ import math
 import base64
 
 FIELDS = {
+    'rx_delay': ('Receive delay factor', float, 0, 20),
+    'airtime_factor': ('Airtime budget factor', float, 0, 9),
     'name': ('Device name', str, None, None),
     'frequency': ('Frequency (MHz)', float, 150, 2500),
     'bandwidth': ('Bandwidth (kHz)', float, 7.8, 500),

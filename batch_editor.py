@@ -15,7 +15,8 @@ class SharedEditor:
         ttk.Label(f,text=f'Same settings for {len(snapshots)} devices',font=('Segoe UI',16,'bold')).pack(anchor='w')
         ttk.Label(f,text='Checked fields are applied to every selected radio. Names and optional fixed positions come next.\nValues start from the saved profile, or the first selected radio. Unchecked fields stay unchanged.').pack(anchor='w',pady=8)
         tabs=ttk.Notebook(f);tabs.pack(fill='both',expand=True)
-        groups=[('Device options', ('buzzer_quiet','led_mode','screen_timeout','screen_usb','usb_priority')),
+        groups=[('Advanced', ('rx_delay','airtime_factor')),
+                ('Device options', ('buzzer_quiet','led_mode','screen_timeout','screen_usb','usb_priority')),
                 ('Radio',('frequency','bandwidth','spreading_factor','coding_rate','tx_power','path_hash_mode','multi_acks')),
                 ('GPS & telemetry',('gps','motion_gps','gps_interval','advert_location_policy','telemetry_mode_base','telemetry_mode_loc','telemetry_mode_env')),
                 ('Discovery',('manual_add_contacts','overwrite_oldest','auto_add_chat','auto_add_repeater','auto_add_room_server','auto_add_sensor','auto_add_max_hops'))]

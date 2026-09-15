@@ -96,3 +96,8 @@ Use **Compatibility** in Saved profiles or **More → Compatibility review** in 
 - **App updates** displays plain-text release notes for an available update. Updating an older version to 0.7.0 still uses that older update dialog; the notes view appears once 0.7.0 is running.
 
 See [Community requests](COMMUNITY_REQUESTS.md) for sourced ideas reviewed on September 9, 2026.
+
+
+## Heltec V4 candidate
+
+USB + BLE + Wi-Fi candidate work and configuration coverage: [configurator guide](HELTEC_V4.md). Hardware validation is pending; choose the correct V4 or V4 R8 OLED target before flashing.

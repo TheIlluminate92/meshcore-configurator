@@ -36,7 +36,7 @@ class App:
         self.pending = tk.StringVar(value='Read a radio to begin')
         self.support_summary = tk.StringVar(value='USB COMPANION  /  LOCAL CONFIGURATION')
         self.results = queue.Queue()
-        root.title('MeshCore Configurator — USB & Bluetooth')
+        root.title('MeshCore Configurator — USB, Bluetooth & Wi-Fi')
         root.geometry('1180x820')
         root.minsize(1100, 800)
         from preferences import load_preferences
@@ -60,6 +60,8 @@ class App:
         tools_menu.add_command(label='Export dry run…',command=self.export_dry_run)
         tools_menu.add_command(label='Back up portable app…',command=self.backup_portable)
         ttk.Button(header,text='App updates',command=self.open_updates).pack(side='right',padx=(8,0))
+        from wifi_setup import open_setup
+        ttk.Button(header,text='Wi-Fi setup',command=lambda:open_setup(self)).pack(side='right',padx=(8,0))
         self.theme_choice=tk.StringVar(value=self.preferences.get('theme','System'))
         theme_box=ttk.Combobox(header,textvariable=self.theme_choice,values=['Light','Dark','System'],state='readonly',width=8)
         theme_box.pack(side='right')
@@ -71,7 +73,7 @@ class App:
         row = ttk.Frame(connection)
         row.pack(fill='x')
         self.transport = tk.StringVar(value='USB')
-        self.transport_box = ttk.Combobox(row, textvariable=self.transport, values=['USB', 'Bluetooth'], width=12, state='readonly')
+        self.transport_box = ttk.Combobox(row, textvariable=self.transport, values=['USB', 'Bluetooth', 'Wi-Fi'], width=12, state='readonly')
         self.transport_box.pack(side='left', padx=(0, 8))
         self.transport_box.bind('<<ComboboxSelected>>', lambda _: self.change_transport())
         self.port = tk.StringVar()
@@ -99,9 +101,11 @@ class App:
             'Location & GPS': ('gps', 'motion_gps', 'gps_interval', 'latitude', 'longitude', 'advert_location_policy'),
             'Contact discovery': ('manual_add_contacts',) + AUTO,
             'Telemetry': ('telemetry_mode_base', 'telemetry_mode_loc', 'telemetry_mode_env'),
+            'Advanced': ('rx_delay', 'airtime_factor'),
             'Device options': ('buzzer_quiet', 'led_mode', 'screen_timeout', 'screen_usb', 'usb_priority'),
         }
         notes = {
+            'Advanced': 'Leave these at the firmware defaults unless testing a specific network requirement. Both values are read and written together, rounded to 0.001. Receive delay: 0–20; airtime factor: 0–9. These match the firmware limits applied on reboot.',
             'Device options': 'Available only when reported by compatible firmware. USB priority pauses BLE commands while a USB app has the port open; unplugging restores access. Screen timeout applies on the next wake or interaction.',
             'Device & radio': 'Choose US/Canada or EU/UK frequency suggestions, or type a custom MHz value. Frequency selection changes frequency only; bandwidth, spreading factor and coding rate must also match your network. Bandwidth accepts dropdown choices or custom kHz values. Repeat mode is preserved.',
             'Location & GPS': 'Fixed coordinates require GPS to be off. GPS options depend on the hardware and firmware. Location sharing in adverts and telemetry access are separate settings.',
@@ -348,6 +352,21 @@ class App:
         self.scan()
 
     def scan(self):
+        if self.transport.get() == 'Wi-Fi':
+            from tkinter import simpledialog
+            from wifi_setup import endpoint
+            address = simpledialog.askstring('Connect over Wi-Fi','Radio IP address or hostname, optionally :5000',parent=self.root)
+            if address:
+                try:
+                    host, number = endpoint(address)
+                except ValueError as exc:
+                    messagebox.showerror('Wi-Fi connection',str(exc)); return
+                host = f'[{host}]' if ':' in host else host
+                self.port.set(f'tcp://{host}:{number}')
+                self.port_box['values']=[self.port.get()]
+                self.invalidate()
+                self.status.set('Wi-Fi address selected. Read device to connect. Use one active configuration client at a time.')
+            return
         if self.transport.get() == 'Bluetooth':
             self.invalidate()
             self.run(bluetooth_devices(), self.bluetooth_found, 'Scanning Bluetooth for 8 seconds… BLE firmware must be enabled.')

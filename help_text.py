@@ -1,5 +1,7 @@
 """Short explanations shared by mouse and keyboard help."""
 HELP = {
+    'rx_delay': 'Advanced receive-delay tuning factor, not a GPS interval. The wire protocol uses thousandths. Leave the firmware default unless testing network timing; changing it can affect reception scheduling.',
+    'airtime_factor': 'Advanced transmit airtime budget factor. Leave the firmware default unless testing a specific network requirement. This is not transmit power or an automatic battery-saving preset.',
     'name': 'The name other people see for this radio. Use a recognizable name or a numbered tracker label. Renaming does not change the device’s identity or keys.',
     'frequency': 'Values are rounded to the nearest 0.001 MHz when sent. The radio channel’s center frequency, in MHz. It must match the mesh you want to join. NashMesh uses 910.525 MHz. Selecting US/EU here changes only frequency; check bandwidth, spreading factor and coding rate too.',
     'bandwidth': 'Values are rounded to the nearest 0.001 kHz when sent. How wide the radio signal is, in kHz. Narrower settings trade data speed for receiver sensitivity. Match your local mesh instead of adjusting this alone. NashMesh uses 62.5 kHz.',

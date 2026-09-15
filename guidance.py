@@ -5,6 +5,8 @@ from tkinter import ttk
 from model import parse_input
 
 ADVICE = {
+ 'rx_delay': 'Keep firmware default; advanced receive timing.',
+ 'airtime_factor': 'Keep firmware default; advanced airtime budget.',
  'name': 'Use a unique, recognizable name.',
  'frequency': 'Match your local mesh frequency.',
  'bandwidth': 'Match mesh. Narrower = longer airtime.',
