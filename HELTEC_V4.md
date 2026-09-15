@@ -23,7 +23,7 @@ or display controls are claimed by this candidate.
 
 V4/V4 R8 firmware **triple.3** adds a Wi-Fi page immediately after Bluetooth on
 the OLED. Short-press USR to navigate, then hold about 1.2 seconds to toggle.
-Wait until the initial eight-second boot-rescue window has passed. A long press
+On the Wi-Fi page this acts as the toggle, including during startup. A long press
 with the screen asleep only wakes it. Configure the network once on the PC;
 the radio retains the network and enabled state across restarts. Reread in the
 configurator after a toggle. Turning Wi-Fi off disconnects TCP; finish any write
