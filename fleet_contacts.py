@@ -46,16 +46,27 @@ def card_bytes(uri):
     hash_size, hash_count = (path >> 6) + 1, path & 63
     if hash_size == 4: raise ValueError('Contact card has an unsupported path encoding.')
     offset += hash_size * hash_count
-    if offset + 100 > len(raw): raise ValueError('Contact card is truncated.')
+    if offset + 100 >= len(raw): raise ValueError('Contact card is truncated.')
     return raw
 
 
 def card_identity(uri):
     raw = card_bytes(uri)
+    offset = card_payload_offset(raw)
+    return raw[offset:offset+32].hex()
+
+
+def card_payload_offset(raw):
     route = raw[0] & 0x03
     offset = 5 if route in (0, 3) else 1
     path = raw[offset]; offset += 1 + ((path >> 6) + 1) * (path & 63)
-    return raw[offset:offset+32].hex()
+    return offset
+
+
+def card_type(uri):
+    raw = card_bytes(uri)
+    # Advert payload: public key (32), timestamp (4), signature (64), app data.
+    return raw[card_payload_offset(raw)+100] & 0x0f
 
 
 class FleetContactStore:

@@ -110,5 +110,38 @@ class ContactWriteTests(unittest.IsolatedAsyncioTestCase):
         entries=[{'public_key':KEY_B,'name':'Bravo','contact_uri':URI_B}]
         with self.assertRaises(ValueError):await self.exercise(entries,wrong=True)
 
+    async def test_manual_filters_temporarily_enable_type_and_restore(self):
+        entries=[{'public_key':KEY_B,'name':'Bravo','contact_uri':URI_B}]
+        current=snapshot();current['self_info']['manual_add_contacts']=True
+        current['auto_add']={'config':4,'max_hops':6}  # repeaters only
+        contacts={};pending=[];reads_after_import=0;flags=4;flag_writes=[]
+        async def get_contacts():
+            nonlocal reads_after_import
+            if pending:
+                reads_after_import+=1
+                if reads_after_import>=2 and flags&2:
+                    key=pending.pop();contacts[key]={'public_key':key,'adv_name':'Bravo'}
+            return SimpleNamespace(type=SimpleNamespace(name='CONTACTS'),payload=copy.deepcopy(contacts))
+        async def import_contact(raw):
+            pending.append(KEY_B)
+            return SimpleNamespace(type=SimpleNamespace(name='OK'),payload={})
+        async def send(packet,expected):
+            nonlocal flags
+            self.assertEqual(packet[0],58);flags=packet[1];flag_writes.append(flags)
+            return SimpleNamespace(type=SimpleNamespace(name='OK'),payload={})
+        async def get_autoadd_config():
+            return SimpleNamespace(type=SimpleNamespace(name='AUTOADD_CONFIG'),payload={'config':flags,'max_hops':6})
+        mc=SimpleNamespace(commands=SimpleNamespace(get_contacts=get_contacts,import_contact=import_contact,
+                            send=send,get_autoadd_config=get_autoadd_config))
+        async def operate(port,action):return await action(mc)
+        async def basic(*args):return copy.deepcopy(current)
+        with tempfile.TemporaryDirectory() as folder,patch.object(device,'operate',operate),patch.object(device,'basic',basic):
+            result=await device.add_contacts('COM4',snapshot(),entries,folder)
+            report=json.loads(next(Path(folder).glob('contacts-*.json')).read_text())
+        self.assertEqual(flag_writes,[6,4])
+        self.assertEqual(result['added'],1)
+        self.assertTrue(report['discovery_restored'])
+        self.assertEqual(report['verified_contacts'][0]['public_key'],KEY_B)
+
 
 if __name__ == '__main__': unittest.main()

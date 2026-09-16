@@ -179,7 +179,7 @@ async def read_device(port):
 
 async def add_contacts(port, baseline, fleet_entries, report_dir):
     """Import signed fleet cards and verify the resulting contact list."""
-    from fleet_contacts import card_bytes, card_identity, identity
+    from fleet_contacts import card_bytes, card_identity, card_type, identity
     async def add(mc):
         current = await basic(mc, port)
         target_key = identity(current['self_info']['public_key'])
@@ -195,7 +195,7 @@ async def add_contacts(port, baseline, fleet_entries, report_dir):
                 raise ValueError(f"Saved contact card for {entry.get('name', key[:12])} does not match its public identity.")
             if key == target_key or key in existing or key in seen:
                 continue
-            requested.append((key, entry.get('name', key[:12]), card_bytes(entry['contact_uri'])))
+            requested.append((key, entry.get('name', key[:12]), card_bytes(entry['contact_uri']), card_type(entry['contact_uri'])))
             seen.add(key)
         maximum = current.get('device', {}).get('max_contacts')
         if isinstance(maximum, int) and len(existing) + len(requested) > maximum:
@@ -203,24 +203,66 @@ async def add_contacts(port, baseline, fleet_entries, report_dir):
         stamp = datetime.now().strftime('%Y%m%d-%H%M%S-%f')
         report_path = Path(report_dir) / f'contacts-{re.sub(r"[^A-Za-z0-9_-]", "_", port)}-{stamp}.json'
         report = {'port': port, 'target': target_key, 'before_count': len(existing),
-                  'requested': [{'public_key': key, 'name': name} for key, name, _ in requested],
-                  'acknowledged': [], 'verified': False}
+                  'requested': [{'public_key': key, 'name': name} for key, name, _, _ in requested],
+                  'acknowledged': [], 'verified_contacts': [], 'verified': False,
+                  'temporary_discovery_change': False, 'discovery_restored': True}
         save_json(report_path, report)
         try:
-            for key, name, raw in requested:
-                await event(mc.commands.import_contact(raw), 'OK')
-                report['acknowledged'].append({'public_key': key, 'name': name})
-                save_json(report_path, report)
-            after = {}
-            missing = [name for _, name, _ in requested]
-            for attempt in range(3):
-                after = await event(mc.commands.get_contacts(), 'CONTACTS')
-                after_keys = {identity(key) for key in after}
-                missing = [name for key, name, _ in requested if key not in after_keys]
-                if not missing: break
-                if attempt < 2: await asyncio.sleep(.2)
-            if missing:
-                raise RuntimeError('Read-back did not contain: ' + ', '.join(missing))
+            # Firmware feeds imported cards through the normal advert path. In
+            # manual-discovery mode that path rejects disabled contact types,
+            # even though CMD_IMPORT_CONTACT returned OK. Enable only the
+            # needed type filters for this transaction, then restore exactly.
+            type_bits={1:2,2:4,3:8,4:16}
+            needed_bits=0
+            for _,_,_,kind in requested:needed_bits |= type_bits.get(kind,0)
+            original_flags=current.get('auto_add',{}).get('config')
+            max_hops=current.get('auto_add',{}).get('max_hops')
+            temporary_flags=None
+            if current.get('self_info',{}).get('manual_add_contacts') and needed_bits:
+                if type(original_flags) is not int:
+                    raise RuntimeError('Contact discovery filters were not readable, so the app cannot safely enable and restore manual imports.')
+                temporary_flags=original_flags | needed_bits
+                if temporary_flags != original_flags:
+                    from meshcore import EventType
+                    packet=bytes([58,temporary_flags])+(bytes([max_hops]) if type(max_hops) is int else b'')
+                    await event(mc.commands.send(packet,[EventType.OK,EventType.ERROR]),'OK')
+                    report['temporary_discovery_change']=True;report['discovery_restored']=False
+                    save_json(report_path,report)
+            operation_error=None;after=before
+            try:
+                for key, name, raw, _ in requested:
+                    await event(mc.commands.import_contact(raw), 'OK')
+                    report['acknowledged'].append({'public_key': key, 'name': name})
+                    save_json(report_path, report)
+                    # BaseChatMesh has one pending loopback slot. Wait for this
+                    # card to be processed before sending the next one.
+                    found=False
+                    for attempt in range(8):
+                        after=await event(mc.commands.get_contacts(),'CONTACTS')
+                        if key in {identity(value) for value in after}:
+                            found=True;break
+                        if attempt < 7:await asyncio.sleep(.25)
+                    if not found:raise RuntimeError(f'Read-back did not contain {name}.')
+                    report['verified_contacts'].append({'public_key':key,'name':name})
+                    save_json(report_path,report)
+            except Exception as exc:
+                operation_error=exc
+            finally:
+                if temporary_flags is not None and temporary_flags != original_flags:
+                    try:
+                        from meshcore import EventType
+                        packet=bytes([58,original_flags])+(bytes([max_hops]) if type(max_hops) is int else b'')
+                        await event(mc.commands.send(packet,[EventType.OK,EventType.ERROR]),'OK')
+                        restored=await event(mc.commands.get_autoadd_config(),'AUTOADD_CONFIG')
+                        if restored.get('config') != original_flags:
+                            raise RuntimeError('Discovery filters did not restore to their original value.')
+                        report['discovery_restored']=True
+                    except Exception as restore_exc:
+                        text='Contact discovery filters could not be restored: '+str(restore_exc)
+                        operation_error=RuntimeError(str(operation_error)+'\n'+text if operation_error else text)
+                    save_json(report_path,report)
+            if operation_error:raise operation_error
+            after_keys={identity(key) for key in after}
             report['after_count'] = len(after_keys)
             report['verified'] = True
             save_json(report_path, report)

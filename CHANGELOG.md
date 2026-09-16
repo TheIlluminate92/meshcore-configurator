@@ -1,5 +1,13 @@
 # Changelog
 
+## Reliable manual contact import — 0.7.7
+
+- Fleet contact copying now accounts for firmware discovery filters. The app
+  temporarily enables only the required contact types, imports and verifies
+  one card at a time, then restores and verifies the original discovery flags.
+- Serializing each import prevents the firmware's single pending advert slot
+  from being overwritten by a rapid multi-card batch.
+
 ## Fleet contact library — 0.7.6
 
 - Full device reads now collect the radio's signed MeshCore contact card and keep

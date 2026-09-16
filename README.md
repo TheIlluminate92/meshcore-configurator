@@ -1,4 +1,4 @@
-Current development version: **0.7.6**; the latest public release is **0.7.5**.
+Current public release: **0.7.7**.
 It includes V4 USB/BLE/Wi-Fi setup, verified tuning controls, T1000 motion GPS,
 T114 display options, and a portable fleet contact library. Controls require
 compatible firmware. See [V4 setup](HELTEC_V4.md),
@@ -78,7 +78,7 @@ A source commit is not itself an installable update. The release build must comp
 
 ## Validation and limitations
 
-The latest local suite passed **144 tests**. A prior read-only Heltec T114 check on firmware v1.17.1 returned **22 settings, 40 channel slots and zero optional read errors**; GPS interval was not reported.
+The latest local suite passed **147 tests**. A prior read-only Heltec T114 check on firmware v1.17.1 returned **22 settings, 40 channel slots and zero optional read errors**; GPS interval was not reported.
 
 Live Bluetooth configuration, real multi-radio writes, persistence after radio restart, and Seeed SenseCAP T1000-E magnetic USB compatibility remain unvalidated. See [VALIDATION.md](VALIDATION.md), [CHANGELOG.md](CHANGELOG.md), [SETTINGS_AUDIT.md](SETTINGS_AUDIT.md) and [FIRMWARE_MAP.md](FIRMWARE_MAP.md).
 
@@ -114,3 +114,4 @@ Use **Compatibility** in Saved profiles or **More → Compatibility review** in 
 - **App updates** displays plain-text release notes for an available update. Updating an older version to 0.7.0 still uses that older update dialog; the notes view appears once 0.7.0 is running.
 
 See [Community requests](COMMUNITY_REQUESTS.md) for sourced ideas reviewed on September 9, 2026.
+
