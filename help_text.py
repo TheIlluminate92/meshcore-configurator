@@ -1,5 +1,7 @@
 """Short explanations shared by mouse and keyboard help."""
 HELP = {
+    'rx_delay': 'Advanced receive-delay tuning factor, not a GPS interval. The wire protocol uses thousandths. Leave the firmware default unless testing network timing; changing it can affect reception scheduling.',
+    'airtime_factor': 'Advanced transmit airtime budget factor. Leave the firmware default unless testing a specific network requirement. This is not transmit power or an automatic battery-saving preset.',
     'name': 'The name other people see for this radio. Use a recognizable name or a numbered tracker label. Renaming does not change the device’s identity or keys.',
     'frequency': 'Values are rounded to the nearest 0.001 MHz when sent. The radio channel’s center frequency, in MHz. It must match the mesh you want to join. NashMesh uses 910.525 MHz. Selecting US/EU here changes only frequency; check bandwidth, spreading factor and coding rate too.',
     'bandwidth': 'Values are rounded to the nearest 0.001 kHz when sent. How wide the radio signal is, in kHz. Narrower settings trade data speed for receiver sensitivity. Match your local mesh instead of adjusting this alone. NashMesh uses 62.5 kHz.',
@@ -37,3 +39,15 @@ HELP = {
     'Save device snapshot': 'Saves the last-read device data rather than your pending edits. Check reported read errors to see whether any information was unavailable.',
     'Review & apply': 'Shows exactly which settings and channel slots will change. After you confirm, writes them through USB and rereads to verify. If a write fails, some earlier changes may already have applied; read the device again.',
 }
+
+HELP.update({
+ 'screen_timeout': 'Turn the display off after 5–300 seconds without interaction. Default: 15 seconds. Shorter saves screen power. Takes effect on the next wake or interaction.',
+ 'screen_usb': 'Keep an already awake screen on while externally powered by USB, including a charger. Unplugging resumes the normal timeout. Default: off. Does not turn the radio off.',
+ 'usb_priority': 'Pause BLE commands while a USB application has the serial port open. BLE receives an error for commands during that time; unplug USB or close the port to restore access. Default: off. This does not isolate shared client state or stop unsolicited messages.',
+})
+
+HELP.update({
+ 'buzzer_quiet': 'Enable or mute the T1000-E buzzer. Uses the existing saved quiet setting; the physical mute gesture still works. No custom melody or volume changes.',
+ 'motion_gps': 'T1000-E experimental GPS power control. Off preserves ordinary GPS. Responsive: sleep after 10 minutes still, refresh after 5 minutes asleep. Balanced: 3 minutes / 15 minutes. Battery saver: 1 minute / 30 minutes. Confirmed motion wakes GPS. No fix for 2 minutes pauses GPS for 5 minutes. Sensor failure keeps ordinary GPS running. Does not change message or advert intervals. Battery savings need field testing.',
+ 'led_mode': 'Normal: existing heartbeat and unread indication. Unread messages only: no heartbeat on battery. Quiet: no normal status flashes on battery. External-power behavior and bootloader indications are preserved.',
+})

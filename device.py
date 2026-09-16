@@ -47,6 +47,11 @@ async def bluetooth_devices():
                    or (adv.local_name or dev.name or '').lower().startswith('meshcore')])
 
 def make_connection(port):
+    if port.startswith('tcp://'):
+        from wifi_setup import endpoint
+        from tcp_connection import ClosingTCPConnection
+        host, number = endpoint(port)
+        return ClosingTCPConnection(host, number)
     if port.startswith('ble:'):
         from meshcore import BLEConnection
         # This library uses a non-None pin flag to request OS pairing.
@@ -88,6 +93,19 @@ async def basic(mc, port):
     for k in ('gps', 'gps_interval'):
         if k in custom and supported_value(k, custom[k]) is not None:
             snapshot['settings'][k] = supported_value(k, custom[k])
+    # Opt in only on the exact extension schema and bounds we understand.
+    from radio_extras import discovered_settings
+    snapshot['settings'].update(discovered_settings(custom))
+    if hasattr(mc.commands, 'get_tuning'):
+        try:
+            tuning = await event(mc.commands.get_tuning(), 'TUNING_PARAMS')
+            snapshot['tuning'] = tuning
+            for key in ('rx_delay', 'airtime_factor'):
+                if key in tuning:
+                    value = supported_value(key, tuning[key] / 1000)
+                    if value is not None: snapshot['settings'][key] = value
+        except Exception as exc:
+            snapshot['read_errors']['tuning'] = str(exc)
     auto = snapshot.get('auto_add', {})
     if 'config' in auto:
         snapshot['settings'].update({k: int(bool(auto['config'] & bit)) for k, bit in AUTO_BITS.items()})
@@ -204,7 +222,12 @@ async def apply_device(port, baseline, desired, report_dir, channels=None):
         save_json(report_path, report)
         try:
             jobs = []
-            for key in ('gps', 'gps_interval'):
+            if {'rx_delay', 'airtime_factor'} & delta.keys():
+                if not {'rx_delay', 'airtime_factor'} <= current['settings'].keys():
+                    raise ValueError('Both tuning settings must be read before either can be changed.')
+                jobs.append(('tuning', lambda: mc.commands.set_tuning(
+                    round(merged['rx_delay'] * 1000), round(merged['airtime_factor'] * 1000))))
+            for key in ('gps', 'gps_interval', 'screen_timeout', 'screen_usb', 'usb_priority', 'buzzer_quiet', 'led_mode', 'motion_gps'):
                 if key in delta:
                     jobs.append((key, lambda k=key: mc.commands.set_custom_var(k, str(merged[k]))))
             if 'name' in delta:
@@ -258,6 +281,8 @@ async def apply_device(port, baseline, desired, report_dir, channels=None):
                 if after['device'].get('repeat') != current['device']['repeat']:
                     raise RuntimeError('Read-back mismatch: repeat mode was not preserved.')
             expected = dict(values)
+            if {'rx_delay', 'airtime_factor'} & delta.keys():
+                expected.update({key: round(merged[key]*1000)/1000 for key in ('rx_delay','airtime_factor')})
             for group in (RADIO, COORDS):
                 if set(group) & delta.keys():
                     expected.update({k: merged[k] for k in group})

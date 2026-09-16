@@ -1,12 +1,14 @@
+Current public release: **0.7.5**. It includes V4 USB/BLE/Wi-Fi setup, verified
+tuning controls, T1000 motion GPS and T114 display options. Controls require
+compatible firmware. See [V4 setup](HELTEC_V4.md),
+[current bug audit](BUG_AUDIT_2026-09-15.md), and
+[motion behavior](MOTION_GPS.md).
+
 # MeshCore Configurator
 
 [Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
 
-A portable Windows app for configuring MeshCore Companion radios over USB or Bluetooth. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
-
-## Custom-firmware development
-
-Custom T1000-E/T114 options and Heltec V4/V4 R8 USB + Bluetooth + Wi-Fi support are on the [everyday-radio development branch](https://github.com/TheIlluminate92/meshcore-configurator/tree/everyday-radio). See the [September 15 bug audit](https://github.com/TheIlluminate92/meshcore-configurator/blob/everyday-radio/BUG_AUDIT_2026-09-15.md) and [V4 setup guide](https://github.com/TheIlluminate92/meshcore-configurator/blob/everyday-radio/HELTEC_V4.md). These development features are separate from the stable download above and are enabled only when the radio reports support.
+A portable Windows app for configuring MeshCore Companion radios over USB, Bluetooth, or compatible Wi-Fi TCP firmware. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
 
 ## Run the portable app
 

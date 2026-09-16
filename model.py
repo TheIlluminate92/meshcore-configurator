@@ -4,6 +4,8 @@ import math
 import base64
 
 FIELDS = {
+    'rx_delay': ('Receive delay factor', float, 0, 20),
+    'airtime_factor': ('Airtime budget factor', float, 0, 9),
     'name': ('Device name', str, None, None),
     'frequency': ('Frequency (MHz)', float, 150, 2500),
     'bandwidth': ('Bandwidth (kHz)', float, 7.8, 500),
@@ -27,6 +29,12 @@ FIELDS = {
     'gps': ('GPS receiver', int, 0, 1),
     'gps_interval': ('GPS update interval (seconds)', int, 1, 86400),
     'path_hash_mode': ('Path hash size', int, 0, 2),
+    'buzzer_quiet': ('Buzzer', int, 0, 1),
+    'motion_gps': ('Motion-aware GPS', int, 0, 3),
+    'led_mode': ('Status LED on battery', int, 0, 2),
+    'screen_timeout': ('Screen timeout (seconds)', int, 5, 300),
+    'screen_usb': ('Keep screen awake on USB power', int, 0, 1),
+    'usb_priority': ('USB configuration priority', int, 0, 1),
 }
 RADIO = ('frequency', 'bandwidth', 'spreading_factor', 'coding_rate')
 COORDS = ('latitude', 'longitude')
@@ -35,9 +43,12 @@ OTHER = ('manual_add_contacts', 'advert_location_policy', 'telemetry_mode_base',
 AUTO_BITS = {'overwrite_oldest': 1, 'auto_add_chat': 2, 'auto_add_repeater': 4,
              'auto_add_room_server': 8, 'auto_add_sensor': 16}
 AUTO = tuple(AUTO_BITS) + ('auto_add_max_hops',)
-CHOICES = {k: {0: 'Off', 1: 'On'} for k in (*AUTO_BITS, 'gps', 'advert_location_policy')}
+CHOICES = {k: {0: 'Off', 1: 'On'} for k in (*AUTO_BITS, 'gps', 'advert_location_policy', 'screen_usb', 'usb_priority')}
 # Editable suggestions preserve custom network values from existing profiles.
 EDITABLE_CHOICES = {'frequency', 'bandwidth'}
+CHOICES['buzzer_quiet'] = {0: 'Sounds enabled', 1: 'Muted'}
+CHOICES['motion_gps'] = {0: 'Off — ordinary GPS', 1: 'Responsive', 2: 'Balanced', 3: 'Battery saver'}
+CHOICES['led_mode'] = {0: 'Normal', 1: 'Unread messages only', 2: 'Quiet'}
 CHOICES['frequency'] = {910.525: 'US / Canada — 910.525 MHz',
                         869.618: 'EU / UK narrow — 869.618 MHz',
                         869.525: 'EU / UK alternative — 869.525 MHz'}

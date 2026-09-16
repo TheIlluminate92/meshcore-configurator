@@ -5,6 +5,8 @@ from tkinter import ttk
 from model import parse_input
 
 ADVICE = {
+ 'rx_delay': 'Keep firmware default; advanced receive timing.',
+ 'airtime_factor': 'Keep firmware default; advanced airtime budget.',
  'name': 'Use a unique, recognizable name.',
  'frequency': 'Match your local mesh frequency.',
  'bandwidth': 'Match mesh. Narrower = longer airtime.',
@@ -29,6 +31,15 @@ ADVICE = {
  'telemetry_mode_loc': 'Allow if needed; base access required.',
  'telemetry_mode_env': 'Allow if needed; base access required.',
 }
+
+ADVICE.update({
+ 'buzzer_quiet': 'Mute if you prefer phone alerts; modest power savings.',
+ 'motion_gps': 'Balanced: sleep GPS after 3 min still; movement wakes it. Experimental.',
+ 'led_mode': 'Unread-only reduces flashing; quiet hides normal status.',
+ 'screen_timeout': '15 seconds is a useful starting point; shorter saves power.',
+ 'screen_usb': 'Useful on a desk; normal timeout resumes on battery.',
+ 'usb_priority': 'Optional: prevent phone commands during USB configuration.',
+})
 
 def impact(key, value):
     """Relative impact within each setting only: None means unquantified."""

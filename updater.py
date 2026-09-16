@@ -37,7 +37,9 @@ def check():
         if exc.code in (403,429):raise ValueError('GitHub temporarily limited update checks. Please try again later.') from None
         raise ValueError('GitHub update check failed. Try again later.') from None
     if release.get('draft') or release.get('prerelease'):raise ValueError('Not a stable published release.')
-    if version(release['tag_name'])<=version(VERSION):return None
+    installed = version(VERSION.removesuffix('-dev'))
+    available = version(release['tag_name'])
+    if available < installed or (available == installed and not VERSION.endswith('-dev')):return None
     asset=next((a for a in release.get('assets',[]) if a['name']==ASSET),None)
     if not asset or not re.fullmatch(r'sha256:[a-f0-9]{64}',asset.get('digest') or ''):raise ValueError('Release has no verified Windows executable yet.')
     if type(asset.get('id')) is not int or asset['id']<=0 or type(asset.get('size')) is not int or not 0<asset['size']<=150*1024*1024:raise ValueError('Invalid update asset.')
