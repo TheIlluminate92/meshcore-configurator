@@ -1,5 +1,18 @@
 # Changelog
 
+## Fleet contact library — 0.7.6
+
+- Full device reads now collect the radio's signed MeshCore contact card and keep
+  it in the portable `User Data/data` folder. A Contacts page shows both the
+  current radio's contact table and every configured radio learned by the app.
+- Current contact lists export to human-friendly CSV or structured JSON.
+- Batch editor → More → Add fleet contacts reviews selected cards against each
+  target, skips the target itself and existing contacts, checks device capacity,
+  writes sequentially, and rereads each contact table for verification.
+- Stored cards are checked for valid advert structure and a matching public
+  identity before use. Contact reports and the fleet library remain local and
+  are included in portable backups, never support reports.
+
 ## Network transport and custom-firmware support — 0.7.5
 
 - Bounded, ordered TCP receive handling; awaited disconnect and task cleanup.

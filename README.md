@@ -1,5 +1,6 @@
-Current public release: **0.7.5**. It includes V4 USB/BLE/Wi-Fi setup, verified
-tuning controls, T1000 motion GPS and T114 display options. Controls require
+Current development version: **0.7.6**; the latest public release is **0.7.5**.
+It includes V4 USB/BLE/Wi-Fi setup, verified tuning controls, T1000 motion GPS,
+T114 display options, and a portable fleet contact library. Controls require
 compatible firmware. See [V4 setup](HELTEC_V4.md),
 [current bug audit](BUG_AUDIT_2026-09-15.md), and
 [motion behavior](MOTION_GPS.md).
@@ -40,6 +41,13 @@ Open **Batch editor** from the main connection row or a saved profile.
 4. Use **More → Individual names & positions** when needed. Review also opens this step if individual values are incomplete. A profile can provide a naming prefix and starting number; names can still be edited individually.
 5. **Review** shows the exact changes in **Review changes / results**. **Apply** asks for final confirmation, then processes devices sequentially and verifies each write.
 
+Every full read also saves that radio's signed public contact card in the local
+configured-radio library. Use **More → Add fleet contacts** to choose those
+cards and add them to the checked radios. Review skips each target itself and
+contacts it already has, blocks a target that lacks capacity, then rereads each
+contact table to verify the additions. Contact copying is a separate reviewed
+operation from profile/settings changes.
+
 Shared profiles omit personal names and coordinates from the batch document; the individual step handles them. Private device identity is never cloned. Copying all channel slots from the first radio can clear slots on other radios; those changes appear in review. Unsupported settings block the affected target.
 
 A write failure stops the remaining batch. **Stop after current device** lets the current operation finish. Completed changes are not rolled back. Read again before another batch. Actual selection changes invalidate review; duplicate selection notifications do not.
@@ -51,6 +59,12 @@ A write failure stops the remaining batch. **Stop after current device** lets th
 **Saved profiles** supports preview, field/channel scope, load, update, import/export, rename and archive. JSON versions 1 and 2 are readable; known browser export formats are mapped with skipped fields reported. Loading a file never writes a radio.
 
 **History** retains public device identities, previous connections, run targets and per-device results in SQLite. Results can be exported to CSV. Unfinished runs are not resumed automatically or marked verified. A no-change target is labeled **No changes at review**, rather than freshly verified.
+
+**Contacts** shows the contact table returned by the currently read radio and
+the app's configured-radio library. Export the current table as CSV for a
+spreadsheet or JSON for structured data. The fleet library stores signed public
+contact cards under `User Data/data`; cards can include an advertised location,
+so portable backups and exports should be kept private.
 
 For a persistence check, restart a radio yourself, choose its current connection, select its saved run in History, then use **Verify selected radio after restart**. This reads without writing and matches public identity even if the COM port changed. It checks saved expectations and records your restart confirmation separately; the app cannot independently prove a restart occurred.
 
@@ -64,7 +78,7 @@ A source commit is not itself an installable update. The release build must comp
 
 ## Validation and limitations
 
-The latest local suite passed **116 tests**, and the portable EXE passed its startup check. A prior read-only Heltec T114 check on firmware v1.17.1 returned **22 settings, 40 channel slots and zero optional read errors**; GPS interval was not reported.
+The latest local suite passed **144 tests**. A prior read-only Heltec T114 check on firmware v1.17.1 returned **22 settings, 40 channel slots and zero optional read errors**; GPS interval was not reported.
 
 Live Bluetooth configuration, real multi-radio writes, persistence after radio restart, and Seeed SenseCAP T1000-E magnetic USB compatibility remain unvalidated. See [VALIDATION.md](VALIDATION.md), [CHANGELOG.md](CHANGELOG.md), [SETTINGS_AUDIT.md](SETTINGS_AUDIT.md) and [FIRMWARE_MAP.md](FIRMWARE_MAP.md).
 

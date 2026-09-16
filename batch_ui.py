@@ -7,7 +7,7 @@ from diagnostics import record_error
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog
 from datetime import datetime
-from device import serial_ports, bluetooth_devices, read_device, save_json
+from device import serial_ports, bluetooth_devices, read_device, save_json, add_contacts
 from model import FIELDS, display
 from batch import plan_many, apply_many
 
@@ -54,6 +54,8 @@ class BatchWindow:
         menu.add_command(label='Compatibility review…',command=lambda:self.guard(self.compatibility))
         menu.add_command(label='Individual names & positions…',command=lambda:self.guard(self.individual_step))
         menu.add_command(label='Save shared profile…',command=lambda:self.guard(self.save_shared))
+        menu.add_separator()
+        menu.add_command(label='Add fleet contacts…',command=lambda:self.guard(self.add_fleet_contacts))
         self.all_checked=tk.BooleanVar(value=False)
         self.master_check=ttk.Checkbutton(f,text='All devices',variable=self.all_checked,command=self.toggle_all)
         self.master_check.pack(anchor='w');self.controls.append(self.master_check)
@@ -213,6 +215,10 @@ class BatchWindow:
                     snapshot=await read_device(port)
                     save_json(self.app.profile_page.library.folder.parent/'snapshots'/('fleet-'+datetime.now().strftime('%Y%m%d-%H%M%S-%f')+'.json'),snapshot)
                     previous=self.app.history.remember(snapshot)
+                    try:self.app.fleet_contacts.remember(snapshot)
+                    except Exception as exc:
+                        snapshot.setdefault('read_errors',{})['fleet_contact_library']=str(exc)
+                        record_error('fleet contacts',exc)
                     snapshot['recognized_from']=previous['last_port'] if previous else None
                     results[port]=snapshot
                     self.queue.put(('progress',port,'Read complete'))
@@ -224,6 +230,37 @@ class BatchWindow:
             self.status.set(f'{len(results)} of {len(ports)} devices read. Uncheck failed devices before review.')
             self.device_summary.set(f'{len(results)} readable radios · {len(ports)-len(results)} unreadable connections')
         self.run(read(),done,'Reading selected devices…')
+
+    def add_fleet_contacts(self):
+        snapshots=self.selected_snapshots()
+        from contact_ui import FleetContactPicker
+        FleetContactPicker(self.window,self.app.fleet_contacts.entries(),snapshots,self.apply_fleet_contacts)
+
+    def apply_fleet_contacts(self,entries):
+        ports=self.selected();snapshots={p:self.snapshots[p] for p in ports}
+        self.start_progress(ports)
+        async def work():
+            results={}
+            for port in ports:
+                if self.cancel.is_set():
+                    self.queue.put(('progress',port,'Not attempted'));continue
+                self.queue.put(('progress',port,'Adding contacts…'))
+                try:
+                    result=await add_contacts(port,snapshots[port],entries,self.app.profile_page.library.folder.parent/'reports')
+                    results[port]=result
+                    self.queue.put(('progress',port,'Verified'))
+                except Exception as exc:
+                    record_error('batch contacts',exc)
+                    self.queue.put(('progress',port,'Failed — reread required'))
+                    raise
+            return results
+        def done(results):
+            lines=[]
+            for port,result in results.items():
+                self.snapshots[port]['contacts']=result['contacts']
+                lines.append(f"{self.snapshots[port]['settings'].get('name','?')} — added {result['added']}, skipped {result['skipped']}\n  {result['report_path']}")
+            self.set_details('\n'.join(lines));self.status.set(f'Fleet contacts verified on {len(results)} devices.')
+        self.run(work(),done,'Adding and verifying fleet contacts…')
 
     def start_progress(self,ports):
         self.progress_ports=list(ports);self.progress_statuses={}

@@ -33,6 +33,8 @@ class App:
         self.closing = False
         from history_store import HistoryStore
         self.history = HistoryStore(ROOT / 'data' / 'history.sqlite3')
+        from fleet_contacts import FleetContactStore
+        self.fleet_contacts = FleetContactStore(ROOT / 'data' / 'fleet_contacts.json')
         self.pending = tk.StringVar(value='Read a radio to begin')
         self.support_summary = tk.StringVar(value='USB COMPANION  /  LOCAL CONFIGURATION')
         self.results = queue.Queue()
@@ -170,6 +172,9 @@ class App:
         self.variables['gps'].trace_add('write', lambda *_: self.location_state())
         self.details = tk.Text(notebook, wrap='none', font=('Consolas', 10), background='#f8fafc', foreground='#243c53', relief='flat', padx=16, pady=16)
         notebook.add(self.details, text='Device data')
+        from contact_ui import ContactPage
+        self.contact_page = ContactPage(notebook, self)
+        notebook.add(self.contact_page.frame, text='Contacts')
         from library_ui import LibraryPage
         self.profile_page = LibraryPage(notebook, self, ROOT / 'profiles')
         notebook.add(self.profile_page, text='Saved profiles')
@@ -390,6 +395,7 @@ class App:
     def invalidate(self):
         self.loading = True
         self.snapshot = None
+        if hasattr(self, 'contact_page'): self.contact_page.clear()
         self.identity.set('Read this port to identify the device and enable supported settings.')
         for key, entry in self.entries.items():
             entry.configure(state='disabled')
@@ -565,6 +571,7 @@ class App:
         self.details.configure(state='normal')
         self.details.delete('1.0', 'end')
         self.details.insert('1.0', json.dumps(snapshot, indent=2, default=str))
+        self.contact_page.show(snapshot)
         self.details.configure(state='disabled')
         self.loading = False
         self.support_summary.set(f"{len(snapshot['settings'])} SETTINGS AVAILABLE   /   {len(snapshot.get('channels', []))} CHANNEL SLOTS   /   {len(snapshot.get('read_errors', {}))} READ WARNINGS")
@@ -572,6 +579,10 @@ class App:
 
     def read_done(self, snapshot):
         previous=self.history.remember(snapshot)
+        fleet_error=None
+        try:self.fleet_contacts.remember(snapshot)
+        except Exception as exc:
+            fleet_error=str(exc);record_error('fleet contacts',exc)
         self.show(snapshot)
         path = ROOT / 'snapshots' / (datetime.now().strftime('%Y%m%d-%H%M%S-%f') + '.json')
         save_json(path, snapshot)
@@ -579,6 +590,7 @@ class App:
         self.status.set(f"Read complete; snapshot saved. {'Some optional reads failed; see reported data.' if errors else 'Ready to edit.'}")
         if previous:
             self.status.set(self.status.get() + (' Recognized radio; previous connection: '+previous['last_port']+'.'))
+        if fleet_error:self.status.set(self.status.get()+' Fleet contact card was not saved: '+fleet_error)
 
     def desired(self):
         if self.snapshot is None:
