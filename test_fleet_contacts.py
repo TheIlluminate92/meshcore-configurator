@@ -52,6 +52,12 @@ class FleetLibraryTests(unittest.TestCase):
         for value in ('http://bad', 'meshcore://x', 'meshcore://'):
             with self.subTest(value=value), self.assertRaises(ValueError): card_bytes(value)
 
+    def test_mismatched_card_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store=FleetContactStore(Path(folder)/'fleet.json')
+            item=snapshot();item['self_contact_uri']=URI_B
+            with self.assertRaisesRegex(ValueError,'does not match'):store.remember(item)
+
     def test_exports_csv_and_json(self):
         contacts={KEY_B:{'public_key':KEY_B,'adv_name':'Bravo','type':1,'adv_lat':1.2,'adv_lon':3.4}}
         item=snapshot(contacts=contacts)
@@ -61,6 +67,11 @@ class FleetLibraryTests(unittest.TestCase):
             self.assertEqual(export_contact_list(json_path,item),1)
             with csv_path.open(encoding='utf-8-sig') as stream:self.assertEqual(list(csv.DictReader(stream))[0]['adv_name'],'Bravo')
             self.assertEqual(json.loads(json_path.read_text())['contacts'][0]['public_key'],KEY_B)
+
+    def test_export_requires_successful_contact_read(self):
+        item=snapshot();item.pop('contacts')
+        with tempfile.TemporaryDirectory() as folder,self.assertRaisesRegex(ValueError,'did not return'):
+            export_contact_list(Path(folder)/'contacts.csv',item)
 
 
 class ContactWriteTests(unittest.IsolatedAsyncioTestCase):

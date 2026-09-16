@@ -574,7 +574,8 @@ class App:
         self.contact_page.show(snapshot)
         self.details.configure(state='disabled')
         self.loading = False
-        self.support_summary.set(f"{len(snapshot['settings'])} SETTINGS AVAILABLE   /   {len(snapshot.get('channels', []))} CHANNEL SLOTS   /   {len(snapshot.get('read_errors', {}))} READ WARNINGS")
+        contact_count=len(snapshot['contacts']) if isinstance(snapshot.get('contacts'),dict) else 0
+        self.support_summary.set(f"{len(snapshot['settings'])} SETTINGS AVAILABLE   /   {len(snapshot.get('channels', []))} CHANNEL SLOTS   /   {contact_count} CONTACTS   /   {len(snapshot.get('read_errors', {}))} READ WARNINGS")
         self.edited()
 
     def read_done(self, snapshot):

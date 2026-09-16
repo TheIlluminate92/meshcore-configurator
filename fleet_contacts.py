@@ -79,7 +79,8 @@ class FleetContactStore:
             try:
                 clean = dict(item)
                 clean['public_key'] = identity(key)
-                card_bytes(clean['contact_uri'])
+                if card_identity(clean['contact_uri']) != clean['public_key']:
+                    continue
                 values.append(clean)
             except (KeyError, TypeError, ValueError):
                 continue
@@ -123,6 +124,8 @@ def contact_rows(snapshot):
 
 
 def export_contact_list(path, snapshot):
+    if not isinstance(snapshot.get('contacts'), dict):
+        raise ValueError('This radio did not return a contact list. Read it again before exporting contacts.')
     path = Path(path)
     rows = contact_rows(snapshot)
     if path.suffix.lower() == '.csv':

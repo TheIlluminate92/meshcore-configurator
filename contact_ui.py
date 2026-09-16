@@ -19,7 +19,8 @@ class ContactPage:
         tabs.add(fleet, text='Configured radios')
 
         bar = ttk.Frame(current); bar.pack(fill='x', pady=(0, 8))
-        ttk.Label(bar, text='Contacts stored on the currently read radio.').pack(side='left')
+        self.current_summary=tk.StringVar(value='Read a radio to view its stored contacts.')
+        ttk.Label(bar, textvariable=self.current_summary).pack(side='left')
         ttk.Button(bar, text='Export contact list…', command=self.export).pack(side='right')
         self.current_tree = self._tree(current, (
             ('name', 'Name', 220), ('type', 'Type', 70), ('key', 'Public key', 370),
@@ -49,7 +50,9 @@ class ContactPage:
     def show(self, snapshot):
         self.snapshot = snapshot
         self.current_tree.delete(*self.current_tree.get_children())
-        for row in contact_rows(snapshot):
+        rows=contact_rows(snapshot)
+        self.current_summary.set(f'{len(rows)} contacts stored on this radio.' if isinstance(snapshot.get('contacts'),dict) else 'The radio contact list was not returned; read it again before exporting.')
+        for row in rows:
             key = str(row.get('public_key', ''))
             kind=row.get('type','')
             self.current_tree.insert('', 'end', values=(row.get('adv_name', ''), CONTACT_TYPES.get(kind,kind),
@@ -59,6 +62,7 @@ class ContactPage:
     def clear(self):
         self.snapshot = None
         self.current_tree.delete(*self.current_tree.get_children())
+        self.current_summary.set('Read a radio to view its stored contacts.')
 
     def refresh_fleet(self):
         self.fleet_tree.delete(*self.fleet_tree.get_children())
