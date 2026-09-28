@@ -12,6 +12,8 @@ You can also choose **Help → Save support report** and attach it to a [new iss
 
 Support ZIPs omit names, identifiers, locations, channel keys, raw device payloads and exception messages. They contain app/system metadata, reported capability names and categorized diagnostics. Review screenshots yourself before sharing.
 
+For a suspected security vulnerability, follow [SECURITY.md](SECURITY.md) instead of posting sensitive details in a public issue.
+
 ## Which file is safe to attach?
 
 | File | Purpose | Sharing |
