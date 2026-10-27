@@ -7,6 +7,21 @@ compatible firmware. See [V4 setup](HELTEC_V4.md),
 
 # MeshCore Configurator
 
+<!-- historian-overview:start -->
+## Project overview
+
+| Field | Project |
+|---|---|
+| Purpose | Windows configurator for compatible MeshCore Companion radios. |
+| Status | Maintained application; device acceptance is separate from automated tests. |
+| Owner | Repository: TheIlluminate92. Worker: Unassigned; project worker not recorded. |
+| Continue here | [Current work / guidance](PROJECT_CONTEXT.md) · [Checks / context](VALIDATION.md) |
+| Related projects | [Compatible firmware](FIRMWARE_MAP.md) |
+
+Documentation reviewed October 27, 2026. Existing evidence dates below still apply;
+this overview is not a new release, deployment or live-system verification.
+<!-- historian-overview:end -->
+
 [Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
 
 A portable Windows app for configuring MeshCore Companion radios over USB, Bluetooth, or compatible Wi-Fi TCP firmware. Profiles use JSON; the app communicates through supported Companion commands, never by editing internal flash files.
