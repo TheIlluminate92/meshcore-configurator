@@ -1,6 +1,16 @@
 # Validation status
 
-Current application version: **0.7.0**. Latest completed local run: **116 automated tests passed**, plus portable executable startup with 23 controls and history initialization. Documentation maintenance does not constitute a new application test run.
+Current source and published stable release are **0.7.7** (reviewed November 9,
+2026); see the [README](README.md) and [release history](CHANGELOG.md). The
+0.7.0 / 116-test record below is historical. The current README reports 147 tests;
+retain its original evidence and obtain the exact newer run receipt before
+treating that total as independently verified by this documentation review.
+Hardware acceptance limits below remain in force unless newer dated evidence
+explicitly supersedes them.
+
+## Historical 0.7.0 validation record
+
+Historical application version: **0.7.0**. Its recorded local run: **116 automated tests passed**, plus portable executable startup with 23 controls and history initialization. Documentation maintenance does not constitute a new application test run.
 
 | Area | Evidence / remaining work |
 | --- | --- |

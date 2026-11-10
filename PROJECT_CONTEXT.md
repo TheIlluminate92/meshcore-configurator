@@ -19,9 +19,18 @@ Read, edit, review, write, verify remain separate steps. Stop on batch write fai
 
 ## Current handoff
 
+Source and published stable release are now **0.7.7**; start with the
+[README](README.md), [validation limits](VALIDATION.md) and
+[change history](CHANGELOG.md). The following 0.7.0 handoff is retained as historical
+development context, not the current version or latest test-count claim. A named
+application owner must verify the next hardware/release acceptance handoff; this
+source review performs no device operation or running-application update.
+
+### Historical 0.7.0 handoff
+
 Portable version 0.7.0 includes four equal-column settings pages, dark/light/system themes, checkbox batch selection, saved-profile application, comparison/history, naming defaults and update controls. User is testing the portable build; do not replace their running EXE or alter their data during documentation/maintenance work. The repository is now public; the updater uses anonymous GitHub release access.
 
-The latest local validation is 116 passing tests, disposable Windows updater integration and packaged startup. Remaining hardware validation gaps are tracked in VALIDATION.md. CHANGELOG.md retains historical bug notes; historical test counts are not the current suite count.
+The recorded 0.7.0 validation was 116 passing tests, disposable Windows updater integration and packaged startup. Remaining hardware validation gaps are tracked in VALIDATION.md. CHANGELOG.md retains historical bug notes; historical test counts are not the current suite count.
 
 
 0.6.0 adds identity-bound restore from individual apply reports, rotating sanitized diagnostics and GitHub-ready support ZIP export, compatibility inspection, and three built-in role presets. Repeater/Room Server presets are explicitly reference-only; only Companion wire operations exist. Do not mistake presets for firmware role conversion. The user confirmed the 0.5.3-to-0.5.4 update/restart works. No automatic support upload: the user attaches the ZIP and submits the GitHub issue.
