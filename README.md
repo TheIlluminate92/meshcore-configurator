@@ -7,20 +7,42 @@ compatible firmware. See [V4 setup](HELTEC_V4.md),
 
 # MeshCore Configurator
 
-<!-- historian-overview:start -->
-## Project overview
+<!-- reader-guide:start -->
+## Meet the project
 
-| Field | Project |
+A Windows application for setting up compatible MeshCore radios over USB, Bluetooth or supported Wi-Fi. Save and compare profiles, inspect differences, and apply supported settings without editing the radio's internal flash files.
+
+### What it is built with
+
+Python 3.12 with Tcl/Tk for the desktop interface, the MeshCore Python client, and JSON profiles/history. The portable release bundles Python.
+
+### Find your way around
+
+| Start here | What you will find |
 |---|---|
-| Purpose | Windows configurator for compatible MeshCore Companion radios. |
-| Status | Maintained application; device acceptance is separate from automated tests. |
-| Owner | Repository: TheIlluminate92. Worker: Unassigned; project worker not recorded. |
-| Continue here | [Current work / guidance](PROJECT_CONTEXT.md) · [Checks / context](VALIDATION.md) |
-| Related projects | [Compatible firmware](FIRMWARE_MAP.md) |
+| [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) | Application boundaries and implementation context. |
+| [app.py](app.py) | Main user interface. |
+| [device.py](device.py) | Radio-facing operations. |
+| [model.py](model.py) | Settings representation. |
+| [SUPPORT.md](SUPPORT.md) | Recovery and problem-reporting route. |
 
-Documentation reviewed October 27, 2026. Existing evidence dates below still apply;
-this overview is not a new release, deployment or live-system verification.
-<!-- historian-overview:end -->
+### When something goes wrong
+
+Start by reading the relevant source or guide below. These are investigation
+starting points, not instructions to change a live system.
+
+| Symptom or question | First place to look |
+|---|---|
+| Cannot connect | Identify USB/Bluetooth/TCP transport and compatible firmware; start with SUPPORT and the matching connection module. |
+| Setting missing or disabled | Read the firmware compatibility map and supported settings before treating it as a UI failure. |
+| Profile/history appears lost | Check the documented User Data location and whole-folder backup contract before resetting anything. |
+
+The repository owner maintains this project; a dedicated technical worker is not recorded.
+
+Reader guide reviewed November 12, 2026 against repository source and available
+owner records. Existing test, deployment and recovery evidence keeps its original
+date; this prose review did not run the application or test a restore.
+<!-- reader-guide:end -->
 
 [Download the portable Windows app](https://github.com/TheIlluminate92/meshcore-configurator/releases/latest) · [Release notes](CHANGELOG.md) · [Get help](SUPPORT.md) · [Roadmap](ROADMAP.md)
 
