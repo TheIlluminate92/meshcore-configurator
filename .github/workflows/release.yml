@@ -37,7 +37,9 @@ jobs:
       - name: Build portable EXE
         shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --onefile --windowed --name MeshCore-Configurator --collect-all meshcore --collect-all bleak --hidden-import serial.tools.list_ports_windows desktop_entry.py
+          python collect_license_notices.py build/license-notices
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m PyInstaller --add-data "build/license-notices/LICENSE;." --add-data "build/license-notices/THIRD_PARTY_NOTICES;THIRD_PARTY_NOTICES" --noconfirm --onefile --windowed --name MeshCore-Configurator --collect-all meshcore --collect-all bleak --hidden-import serial.tools.list_ports_windows desktop_entry.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Publish immutable version assets
         env:
@@ -49,6 +51,7 @@ jobs:
           if ($LASTEXITCODE -eq 0) { throw 'Version already published. Bump app_version.py instead of replacing it.' }
           New-Item -ItemType Directory -Path 'portable/MeshCore Configurator' -Force | Out-Null
           Copy-Item -LiteralPath 'dist/MeshCore-Configurator.exe' -Destination 'portable/MeshCore Configurator/! MeshCore Configurator.exe'
+          Copy-Item -Path 'build/license-notices/*' -Destination 'portable/MeshCore Configurator' -Recurse -Force
           Compress-Archive -LiteralPath 'portable/MeshCore Configurator' -DestinationPath 'dist/MeshCore-Configurator-portable.zip'
           python release_notes.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

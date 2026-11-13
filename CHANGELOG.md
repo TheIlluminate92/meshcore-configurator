@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — licensing maintenance (2026-11-13)
+
+Local and CI builds embed the project license and collected dependency notices in the EXE. The CI portable ZIP also carries readable copies. Existing release assets remain unchanged; a new version is required to publish corrected binaries. See [LICENSING.md](LICENSING.md). No runtime behavior or existing release asset changed.
+
 ## Reliable manual contact import — 0.7.7
 
 - Fleet contact copying now accounts for firmware discovery filters. The app

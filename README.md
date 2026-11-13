@@ -152,3 +152,8 @@ Use **Compatibility** in Saved profiles or **More → Compatibility review** in 
 
 See [Community requests](COMMUNITY_REQUESTS.md) for sourced ideas reviewed on September 9, 2026.
 
+
+
+## License and redistribution
+
+[MIT License](LICENSE): reuse and modification are allowed with the notice retained. Provided as is, without warranty. See [licensing and packaging scope](LICENSING.md) for third-party terms and release limitations.
